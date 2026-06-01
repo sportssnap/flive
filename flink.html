@@ -825,7 +825,7 @@ function updateTimerLabels(){
 /* ═══════════════════════════════════════════════════
    FETCH JSON
 ═══════════════════════════════════════════════════ */
-fetch('https://sportssnap.github.io/flive/matches.json')
+fetch('https://sportssnap.github.io/fmatch/matches.json')
   .then(function(r){ return r.json(); })
   .then(function(data){ renderMatches(data); })
   .catch(function(){
