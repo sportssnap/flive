@@ -637,18 +637,30 @@ function getStatus(start, end){
   return 'ended';
 }
 
-function formatTime(isoStr){
-  var d = new Date(isoStr);
-  return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:true});
-}
 
 function formatCountdown(ms){
-  var s = Math.floor(ms/1000);
-  var h = Math.floor(s/3600);
-  var m = Math.floor((s%3600)/60);
-  var sec = s%60;
-  if(h > 0) return h+'h '+m+'m';
-  return m+'m '+sec+'s';
+  var s   = Math.floor(ms / 1000);
+  var d   = Math.floor(s / 86400);
+  var h   = Math.floor((s % 86400) / 3600);
+  var m   = Math.floor((s % 3600) / 60);
+  var sec = s % 60;
+  if(d > 0) return d + 'd ' + h + 'h ' + m + 'm';
+  if(h > 0) return h + 'h ' + m + 'm ' + sec + 's';
+  return m + 'm ' + sec + 's';
+}
+
+/* ═══════════════════════════════════════════════════
+   SORT MATCHES: live → upcoming (soonest first) → ended
+═══════════════════════════════════════════════════ */
+function sortMatches(matches){
+  return matches.slice().sort(function(a, b){
+    var sa = getStatus(a.start, a.end);
+    var sb = getStatus(b.start, b.end);
+    var order = { live:0, upcoming:1, ended:2 };
+    if(order[sa] !== order[sb]) return order[sa] - order[sb];
+    // Within same status, sort by start time ascending (soonest upcoming first)
+    return new Date(a.start) - new Date(b.start);
+  });
 }
 
 /* ═══════════════════════════════════════════════════
@@ -659,14 +671,18 @@ function buildCard(match, sport){
   var now    = new Date();
   var start  = new Date(match.start);
 
-  // Time box label
+  // Time box label — countdown for ALL upcoming, not just sub-1h
   var timeLabel = '';
   var timeClass = '';
-  if(status === 'live')     { timeLabel = '● LIVE NOW'; timeClass = 'status-live'; }
-  else if(status === 'ended'){ timeLabel = 'Ended';      timeClass = 'status-ended'; }
-  else {
-    var diff = start - now;
-    timeLabel = diff < 3600000 ? '🔔 ' + formatCountdown(diff) : formatTime(match.start);
+  if(status === 'live'){
+    timeLabel = '● LIVE NOW';
+    timeClass = 'status-live';
+  } else if(status === 'ended'){
+    timeLabel = 'Ended';
+    timeClass = 'status-ended';
+  } else {
+    var diff  = start - now;
+    timeLabel = '⏱ ' + formatCountdown(diff);
     timeClass = diff < 3600000 ? 'status-soon' : 'status-upcoming';
   }
 
@@ -683,7 +699,7 @@ function buildCard(match, sport){
 
   var url = match.stream_url || '#';
 
-  return '<div class="match-card" data-sport="'+sport+'" data-status="'+status+'" onclick="goMatch(\''+url+'\')">'
+  return '<div class="match-card" data-sport="'+sport+'" data-status="'+status+'" data-id="'+match.id+'" data-start="'+match.start+'" data-end="'+match.end+'" onclick="goMatch(\''+url+'\')">'
     + '<div class="match-card-inner">'
       + '<div class="mc-team">'
         + logoHtml(match.home_logo, match.home_flag, match.home_team)
@@ -746,7 +762,7 @@ function showFilter(filter){
   if(showFoot && allMatchData.football.length){
     var sep = '<div class="sport-sep">⚽ Football Matches</div>';
     var grid = '<div class="matches-grid">';
-    allMatchData.football.forEach(function(m){ grid += buildCard(m,'football'); });
+    sortMatches(allMatchData.football).forEach(function(m){ grid += buildCard(m,'football'); });
     grid += '</div>';
     root.innerHTML += sep + grid;
     hasContent = true;
@@ -754,7 +770,7 @@ function showFilter(filter){
   if(showCric && allMatchData.cricket.length){
     var sep2 = '<div class="sport-sep" style="margin-top:4px">🏏 Cricket Matches</div>';
     var grid2 = '<div class="matches-grid">';
-    allMatchData.cricket.forEach(function(m){ grid2 += buildCard(m,'cricket'); });
+    sortMatches(allMatchData.cricket).forEach(function(m){ grid2 += buildCard(m,'cricket'); });
     grid2 += '</div>';
     root.innerHTML += sep2 + grid2;
     hasContent = true;
@@ -787,36 +803,28 @@ function goMatch(url){
 var timerInterval = null;
 function startTimers(){
   if(timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(function(){
-    document.querySelectorAll('.match-card').forEach(function(card){
-      var sport  = card.getAttribute('data-sport');
-      var cards  = sport==='football' ? allMatchData.football : allMatchData.cricket;
-      // find matching card by position
-    });
-    // Re-render time boxes only (lightweight)
-    updateTimerLabels();
-  }, 1000);
+  timerInterval = setInterval(updateTimerLabels, 1000);
 }
 
 function updateTimerLabels(){
-  var allMatches = allMatchData.football.concat(allMatchData.cricket);
-  document.querySelectorAll('.mc-time-box').forEach(function(box, i){
-    if(i >= allMatches.length) return;
-    var m = allMatches[i];
-    if(!m) return;
-    var status = getStatus(m.start, m.end);
-    var now    = new Date();
-    var start  = new Date(m.start);
+  var now = new Date();
+  document.querySelectorAll('.match-card[data-start]').forEach(function(card){
+    var box    = card.querySelector('.mc-time-box');
+    if(!box) return;
+    var start  = new Date(card.getAttribute('data-start'));
+    var end    = new Date(card.getAttribute('data-end'));
+    var status = now < start ? 'upcoming' : (now <= end ? 'live' : 'ended');
+
     box.className = 'mc-time-box ';
-    if(status==='live'){
+    if(status === 'live'){
       box.className += 'status-live';
       box.textContent = '● LIVE NOW';
-    } else if(status==='ended'){
+    } else if(status === 'ended'){
       box.className += 'status-ended';
       box.textContent = 'Ended';
     } else {
       var diff = start - now;
-      box.textContent = diff < 3600000 ? '🔔 '+formatCountdown(diff) : formatTime(m.start);
+      box.textContent = '⏱ ' + formatCountdown(diff);
       box.className  += diff < 3600000 ? 'status-soon' : 'status-upcoming';
     }
   });
@@ -825,7 +833,7 @@ function updateTimerLabels(){
 /* ═══════════════════════════════════════════════════
    FETCH JSON
 ═══════════════════════════════════════════════════ */
-fetch('https://sportssnap.github.io/fmatch/matches.json')
+fetch('https://sportssnap.github.io/flive/matches.json')
   .then(function(r){ return r.json(); })
   .then(function(data){ renderMatches(data); })
   .catch(function(){
