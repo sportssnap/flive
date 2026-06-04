@@ -7,13 +7,7 @@
 <title>Sports Snap: Live Match Stream</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --bg-color:#eceef2;--header-color:#ffffff;--theme-color:#3749b4;
-  --widget-title-bg:#3749b4;--bar-background:#eceef2;--card-background:#eceef2;
-  --border-radius:5px;--live-start:#e0190b;--live-soon:#13b619;--live-end:#545454;
-  --surface:#ffffff;--border:#ddd;--text:#222;--muted:#666;
-  --fd:'Barlow Condensed',sans-serif;--fb:'DM Sans',sans-serif;
-}
+:root{--bg-color:#eceef2;--header-color:#ffffff;--theme-color:#3749b4;--widget-title-bg:#3749b4;--bar-background:#eceef2;--card-background:#eceef2;--border-radius:5px;--live-start:#e0190b;--live-soon:#13b619;--live-end:#545454;--surface:#ffffff;--border:#ddd;--text:#222;--muted:#666;--fd:'Barlow Condensed',sans-serif;--fb:'DM Sans',sans-serif;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--fb);background:var(--bg-color);color:var(--text);font-size:15px;line-height:1.5;min-height:100vh;overflow-x:hidden;width:100%;}
@@ -21,17 +15,14 @@ a{color:var(--text);text-decoration:none}
 img{display:block;max-width:100%}
 ul,ol{list-style:none}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
-
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
 @keyframes slideIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}
 @keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
-
+@keyframes countPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
 .container{max-width:1000px;margin:auto;padding:0 12px}
-
-/* ── HEADER ── */
 .menu-section{position:relative;margin-bottom:5px;overflow:hidden;width:100%;background:var(--header-color);box-shadow:0 0 4px rgba(0,0,0,.3);}
 .hdr-inner{max-width:1000px;margin:auto;padding:0 12px;display:flex;align-items:center;justify-content:space-between;height:74px;gap:12px;}
 .navbar-brand{display:flex;align-items:center;gap:8px;cursor:pointer;flex-shrink:0;text-decoration:none;}
@@ -59,56 +50,55 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .mob-nav-inner a{padding:9px 13px;border-radius:var(--border-radius);font-weight:500;font-size:14px;color:var(--text);transition:background .2s;display:block;}
 .mob-nav-inner a:hover{background:var(--bg-color)}
 .mob-soc{display:flex;gap:7px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
-
-/* ── JOIN BUTTONS ── */
 .join-wrap{padding:8px 0;display:flex;gap:8px;flex-wrap:wrap}
 .join-btn{flex:1;min-width:160px;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 14px;border-radius:var(--border-radius);font-family:var(--fd);font-size:16px;font-weight:700;letter-spacing:.02em;color:#fff;cursor:pointer;border:none;transition:transform .15s,box-shadow .15s;text-decoration:none;}
 .join-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.14)}
 .join-btn.tg{background:#389ce9}.join-btn.yt{background:#ff0000}
 .join-btn svg{width:20px;height:20px;fill:#fff;flex-shrink:0}
-
-/* ── NOTE ── */
 .note-section{font-family:var(--fb);background:#fff;padding:8px 12px;border-radius:var(--border-radius);box-shadow:0 2px 8px rgba(0,0,0,.07);width:100%;max-width:800px;margin:8px auto;border-left:5px solid #ffa07a;}
 .note-section h3{font-size:15px;color:#ff6347;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .note-section ul li{font-size:13px;color:#333;margin-bottom:6px;line-height:1.5;position:relative;padding-left:22px;font-weight:500;}
 .note-section ul li::before{content:'\27A4';position:absolute;left:0;color:#ffa07a;font-size:14px;font-weight:700}
-
-/* ── PANEL ── */
 .panel{box-shadow:0 0 4px rgba(0,0,0,.3);background:#fff;position:relative;margin-bottom:15px;overflow:hidden;border-radius:var(--border-radius);}
 .box-title{padding:8px 12px;overflow:hidden;border-bottom:1px solid var(--border);border-radius:var(--border-radius) var(--border-radius) 0 0;background:var(--bar-background);display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.box-title h2,.box-title h3{font-size:14px;font-weight:700;background:var(--widget-title-bg);color:#fff;padding:2px 10px;border-radius:var(--border-radius);display:inline-flex;align-items:center;gap:6px;margin:0;}
+.box-title h2{font-size:14px;font-weight:700;background:var(--widget-title-bg);color:#fff;padding:2px 10px;border-radius:var(--border-radius);display:inline-flex;align-items:center;gap:6px;margin:0;}
 .box-title .dot{width:8px;height:8px;border-radius:50%;display:inline-block;animation:pulseDot 1.6s ease infinite;flex-shrink:0;}
 .dot-live{background:#e0190b}
-.box-title .tab-date{font-size:12px;color:var(--muted)}
+.tab-date{font-size:12px;color:var(--muted)}
 
-/* ── STREAM LINKS BOX ── */
-.stream-box{padding:14px 16px;background:#f4f7fc;}
-.stream-box.no-match{display:flex;align-items:center;justify-content:center;min-height:120px;}
-.no-match-msg{font-size:15px;color:#ff6f61;font-weight:700;background:#ffe1e1;padding:16px 24px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.08);text-align:center;}
+/* Stream box */
+.stream-box{padding:14px 16px;background:#f4f7fc;min-height:110px;}
+.stream-spinner{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:30px 0;}
+.spin-ring{width:38px;height:38px;border:3px solid #ddd;border-top-color:#3749b4;border-radius:50%;animation:spin .75s linear infinite}
 
-/* Links UI (styled like your original technorati-links) */
-.stream-links-wrap{font-family:Arial,sans-serif;text-align:left;width:90%;margin:0 auto;}
-.stream-links-title{font-size:20px;font-weight:bold;margin-bottom:12px;text-align:center;color:var(--text);}
-.stream-link-btn{
-  display:block;text-align:center;font-size:16px;font-weight:bold;
-  color:#fff;background-color:tomato;padding:8px 12px;
-  border-radius:5px;margin-bottom:7px;
-  border:2px solid #000;cursor:pointer;
-  transition:background-color .3s ease;text-decoration:none;
-}
-.stream-link-btn:hover{background-color:#00008B;color:#fff;}
-.stream-spinner{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:30px 0;min-height:120px;}
+/* Technorati links */
+.technorati-links{font-family:Arial,sans-serif;text-align:left;width:90%;margin:0 auto;}
+.technorati-links .tl-title{font-size:20px;font-weight:bold;margin-bottom:10px;text-align:center;color:var(--text);}
+.technorati-links a{text-decoration:none;font-size:16px;font-weight:bold;color:#fff;background-color:tomato;padding:6px 12px;border-radius:5px;margin-bottom:7px;display:block;text-align:center;transition:background-color .3s ease;border:2px solid #000;}
+.technorati-links a:hover{background-color:#00008B;color:#fff;}
 
-/* ── MATCHES PANEL ── */
-.matches-section{margin-top:0;animation:fadeUp .5s ease both}
-.filter-tabs{display:flex;align-items:center;gap:4px;flex-wrap:wrap;padding:8px 12px;background:var(--bar-background);border-bottom:1px solid var(--border);}
-.filter-tab{font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 12px;border-radius:var(--border-radius);cursor:pointer;transition:background .15s,color .15s;color:var(--muted);background:transparent;border:1px solid transparent;}
-.filter-tab:hover{background:#eceef2;color:var(--text)}
-.filter-tab.active-all{background:var(--theme-color);color:#fff;border-color:var(--theme-color)}
-.filter-tab.active-foot{background:#0f4cdb;color:#fff;border-color:#0f4cdb}
-.filter-tab.active-cric{background:#16a34a;color:#fff;border-color:#16a34a}
-.live-count{background:#e0190b;color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:4px;animation:blink 1.4s ease infinite;line-height:15px;display:none;}
+/* Countdown box */
+.countdown-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 16px;gap:8px;text-align:center;}
+.cd-label{font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.cd-timer{font-family:var(--fd);font-size:54px;font-weight:800;letter-spacing:.03em;color:#3749b4;line-height:1;animation:countPulse 1s ease infinite;}
+.cd-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.cd-soon .cd-timer{color:#e0a800;}
+.cd-soon .cd-label{color:#e0a800;}
 
+/* Match ended box */
+.ended-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 16px;gap:8px;text-align:center;}
+.ended-icon{font-size:42px;line-height:1;}
+.ended-title{font-family:var(--fd);font-size:22px;font-weight:800;color:#545454;letter-spacing:.02em;}
+.ended-sub{font-size:13px;color:var(--muted);}
+
+/* No match */
+.no-match-box{display:flex;align-items:center;justify-content:center;min-height:100px;}
+.no-match-msg{font-size:15px;color:#ff6f61;font-weight:700;background:#ffe1e1;padding:16px 24px;border-radius:8px;text-align:center;}
+
+/* More matches */
+.matches-section{animation:fadeUp .5s ease both}
+.sport-sep{display:flex;align-items:center;gap:10px;padding:10px 12px 4px;font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+.sport-sep::after{content:'';flex:1;height:1px;background:var(--border)}
 .matches-grid{padding:10px 12px 14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
 .match-card{border:1px solid var(--border);overflow:hidden;text-align:center;background:var(--card-background);border-radius:var(--border-radius);position:relative;cursor:pointer;transition:box-shadow .2s,transform .15s;display:flex;flex-direction:column;}
 .match-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);transform:translateY(-2px)}
@@ -132,67 +122,53 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .badge-wc{background:#e63946}.badge-ucl{background:#1a56db}.badge-ipl{background:#f59e0b;color:#111}.badge-t20{background:#059669}.badge-epl{background:#38003c}.badge-odi{background:#0891b2}.badge-laliga{background:#ff4500}.badge-seriea{background:#1e3a6e}.badge-test{background:#7c3aed}.badge-default{background:#555}
 .watch-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s,background .2s;pointer-events:none;}
 .match-card:hover .watch-overlay{opacity:1;background:rgba(0,0,0,.55);pointer-events:auto}
-.watch-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;transition:transform .15s;}
-.watch-btn:hover{transform:scale(1.12)}
+.watch-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;}
 .watch-btn svg{width:18px;height:18px;fill:var(--theme-color)}
-
 .skeleton-grid{padding:10px 12px 14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .skeleton-card{height:110px;border-radius:var(--border-radius);background:linear-gradient(90deg,#eceef2 25%,#f8f9fb 50%,#eceef2 75%);background-size:400px 100%;animation:shimmer 1.4s ease infinite}
 .matches-empty{padding:24px;text-align:center;color:var(--muted);font-size:14px}
-
-/* ── AD ── */
 .ad-slot{text-align:center;padding:6px 0;margin-bottom:10px}
 .ad-label{font-size:10px;color:#bbb;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
 .ad-placeholder{display:inline-flex;align-items:center;justify-content:center;background:var(--bg-color);border:1px dashed var(--border);border-radius:var(--border-radius);font-size:11px;color:var(--muted);}
-
-/* ── FOOTER ── */
 footer{position:relative;background:#fff;padding:0;overflow:hidden;box-shadow:0 0 4px rgba(0,0,0,.3);margin-top:15px;}
 .foot-inner{display:flex;align-items:center;justify-content:space-between;padding:12px;flex-wrap:wrap;gap:8px;}
 .foot-copy{font-size:12px;color:var(--muted)}
 .foot-soc{display:flex;gap:6px}
 
-/* ── DARK MODE ── */
+/* Dark mode */
 body.Night{--bg-color:#1c2733;--header-color:#263545;--surface:#263545;--bar-background:#263545;--card-background:#1c2733;--border:#364045;--text:#fff;--muted:#9aa5b4;--widget-title-bg:#1c2733;}
 body.Night .panel{background:#263545}
 body.Night .note-section{background:#263545;border-color:#e0190b}
 body.Night .note-section ul li{color:#ccc}
 body.Night .stream-box{background:#1c2733}
-body.Night .stream-links-title{color:#fff}
+body.Night .technorati-links .tl-title{color:#fff}
 body.Night .match-card{background:#1c2733;border-color:#364045}
 body.Night .mc-logo{background:#263545;border-color:#364045}
 body.Night footer{background:#263545}
 body.Night .mob-nav-inner{background:#263545}
 body.Night .skeleton-card{background:linear-gradient(90deg,#263545 25%,#1c2733 50%,#263545 75%);background-size:400px 100%}
+body.Night .cd-timer{color:#7b93ff}
+body.Night .ended-title{color:#9aa5b4}
 
-/* ── STICKY BOTTOM AD ── */
 #fixedban{position:fixed;bottom:0;left:0;width:100%;text-align:center;z-index:999}
 .fixedban-inner{display:inline-block;position:relative;background:#fff;border-top:1px solid var(--border);box-shadow:0 -4px 12px rgba(0,0,0,.08);padding:6px 36px 6px 6px}
 .fixedban-close{position:absolute;top:-12px;right:6px;width:22px;height:22px;background:#e0190b;border-radius:50%;color:#fff;font-size:13px;font-weight:700;line-height:22px;text-align:center;cursor:pointer;border:none;}
 
-/* ── RESPONSIVE ── */
 @media(max-width:640px){
-  .hdr-nav{display:none}
-  .btn-ham{display:flex}
-  .join-wrap{flex-direction:column}
-  .join-btn{min-width:0;width:100%}
-  .matches-grid{grid-template-columns:1fr}
-  .mc-name{font-size:13px;max-width:75px}
-  .stream-links-wrap{width:100%}
+  .hdr-nav{display:none}.btn-ham{display:flex}
+  .join-wrap{flex-direction:column}.join-btn{min-width:0;width:100%}
+  .matches-grid{grid-template-columns:1fr}.mc-name{font-size:13px;max-width:75px}
+  .technorati-links{width:100%}.cd-timer{font-size:38px}
 }
 @media(max-width:420px){
-  .hdr-inner{height:60px}
-  .navbar-brand img{height:36px}
-  .mc-logo{width:36px;height:36px}
-  .mc-logo img{width:28px;height:28px}
-  .mc-logo .mc-flag{font-size:20px}
+  .hdr-inner{height:60px}.navbar-brand img{height:36px}
+  .mc-logo{width:36px;height:36px}.mc-logo img{width:28px;height:28px}.mc-logo .mc-flag{font-size:20px}
 }
 </style>
 </head>
-
 <body class='index theme2'>
 <script>if(localStorage.getItem('mode')==='rdmode'){document.body.classList.add('Night')}</script>
 
-<!-- ── HEADER ── -->
 <div class='menu-section'>
   <div class='hdr-inner'>
     <a class='navbar-brand' href='https://sportssnap.github.io/footlive/foot'>
@@ -200,33 +176,24 @@ body.Night .skeleton-card{background:linear-gradient(90deg,#263545 25%,#1c2733 5
       <div class='logo-fallback'>Sports<span>Snap</span></div>
     </a>
     <nav class='hdr-nav'>
-      <a href='https://sportssnap.github.io/footlive/foot'>⚽ Football</a>
-      <a href='https://sportssnap.github.io/cricmatch/cmatch'>🏏 Cricket</a>
-      <a href='https://sportssnap.github.io/highlights/hmatch'>🎬 Highlights</a>
+      <a href='https://sportssnap.github.io/footlive/foot'>Football</a>
+      <a href='https://sportssnap.github.io/cricmatch/cmatch'>Cricket</a>
+      <a href='https://sportssnap.github.io/highlights/hmatch'>Highlights</a>
     </nav>
     <div class='hdr-actions'>
-      <div class='btn-soc tg' onclick="window.open('https://t.me/sportssnapofficial','_blank')" title='Telegram'>
-        <svg viewBox='0 0 24 24'><path d='m9.417 15.181-.397 5.584c.568 0 .814-.244 1.109-.537l2.663-2.545 5.518 4.041c1.012.564 1.725.267 1.998-.931l3.622-16.972c.321-1.496-.541-2.081-1.527-1.714l-21.29 8.151c-1.453.564-1.431 1.374-.247 1.741l5.443 1.693 12.643-7.911c.595-.394 1.136-.176.691.218z'/></svg>
-      </div>
-      <div class='btn-soc yt' onclick="window.open('https://www.youtube.com/channel/sportssnap2023','_blank')" title='YouTube'>
-        <svg viewBox='0 0 24 24'><path d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'/></svg>
-      </div>
-      <button class='btn-night' id='nightToggle' title='Toggle dark mode'>
-        <svg viewBox='0 0 24 24'><path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/></svg>
-      </button>
-      <button class='btn-ham' id='menuBtn' aria-label='Menu'>
-        <span></span><span></span><span></span>
-      </button>
+      <div class='btn-soc tg' onclick="window.open('https://t.me/sportssnapofficial','_blank')"><svg viewBox='0 0 24 24'><path d='m9.417 15.181-.397 5.584c.568 0 .814-.244 1.109-.537l2.663-2.545 5.518 4.041c1.012.564 1.725.267 1.998-.931l3.622-16.972c.321-1.496-.541-2.081-1.527-1.714l-21.29 8.151c-1.453.564-1.431 1.374-.247 1.741l5.443 1.693 12.643-7.911c.595-.394 1.136-.176.691.218z'/></svg></div>
+      <div class='btn-soc yt' onclick="window.open('https://www.youtube.com/channel/sportssnap2023','_blank')"><svg viewBox='0 0 24 24'><path d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'/></svg></div>
+      <button class='btn-night' id='nightToggle'><svg viewBox='0 0 24 24'><path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/></svg></button>
+      <button class='btn-ham' id='menuBtn'><span></span><span></span><span></span></button>
     </div>
   </div>
 </div>
 
-<!-- Mobile Drawer -->
 <div class='mob-nav' id='mobNav'>
   <div class='mob-nav-inner'>
-    <a href='https://sportssnap.github.io/footlive/foot'>⚽ Football Live</a>
-    <a href='https://sportssnap.github.io/cricmatch/cmatch'>🏏 Cricket Live</a>
-    <a href='https://sportssnap.github.io/highlights/hmatch'>🎬 Highlights</a>
+    <a href='https://sportssnap.github.io/footlive/foot'>Football Live</a>
+    <a href='https://sportssnap.github.io/cricmatch/cmatch'>Cricket Live</a>
+    <a href='https://sportssnap.github.io/highlights/hmatch'>Highlights</a>
     <div class='mob-soc'>
       <div class='btn-soc tg' onclick="window.open('https://t.me/sportssnapofficial','_blank')" style='width:36px;height:36px;'><svg viewBox='0 0 24 24' style='width:15px;height:15px;fill:#fff'><path d='m9.417 15.181-.397 5.584c.568 0 .814-.244 1.109-.537l2.663-2.545 5.518 4.041c1.012.564 1.725.267 1.998-.931l3.622-16.972c.321-1.496-.541-2.081-1.527-1.714l-21.29 8.151c-1.453.564-1.431 1.374-.247 1.741l5.443 1.693 12.643-7.911c.595-.394 1.136-.176.691.218z'/></svg></div>
       <div class='btn-soc yt' onclick="window.open('https://www.youtube.com/channel/sportssnap2023','_blank')" style='width:36px;height:36px;'><svg viewBox='0 0 24 24' style='width:15px;height:15px;fill:#fff'><path d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'/></svg></div>
@@ -234,7 +201,6 @@ body.Night .skeleton-card{background:linear-gradient(90deg,#263545 25%,#1c2733 5
   </div>
 </div>
 
-<!-- ── MAIN ── -->
 <main>
   <div class='container' style='padding:0 12px'>
 
@@ -258,45 +224,30 @@ body.Night .skeleton-card{background:linear-gradient(90deg,#263545 25%,#1c2733 5
       </ul>
     </div>
 
-    <!-- ── STREAM LINKS PANEL ── -->
+    <!-- Stream Panel -->
     <div class='panel' id='stream-panel'>
       <div class='box-title'>
-        <h2>
-          <span class='dot dot-live'></span>
-          <span id='stream-title-text'>Live Stream</span>
-        </h2>
+        <h2><span class='dot dot-live'></span><span id='stream-title-text'>Live Stream</span></h2>
         <span class='tab-date' id='streamDate'></span>
       </div>
       <div class='stream-box' id='stream-box'>
-        <!-- spinner shown before links load -->
         <div class='stream-spinner' id='stream-spinner'>
-          <div style='width:38px;height:38px;border:3px solid #ddd;border-top-color:#3749b4;border-radius:50%;animation:spin .75s linear infinite'></div>
-          <p style='font-size:13px;color:#666'>Loading stream links…</p>
+          <div class='spin-ring'></div>
+          <p style='font-size:13px;color:#666;margin-top:4px'>Loading…</p>
         </div>
-        <!-- links injected here -->
-        <div id='stream-links-inner'></div>
+        <div id='stream-content'></div>
       </div>
     </div>
 
-    <!-- ── MORE MATCHES PANEL ── -->
+    <!-- More Matches Panel -->
     <div class='panel matches-section' id='matches-panel'>
       <div class='box-title'>
-        <h2>
-          <span class='dot dot-live'></span>
-          <span id='more-matches-title'>More Matches</span>
-        </h2>
+        <h2><span class='dot dot-live'></span><span id='more-matches-title'>More Matches</span></h2>
         <span class='tab-date' id='matchDate'></span>
       </div>
-
-      <div class='filter-tabs' id='filter-tabs-wrap'>
-        <!-- filter tabs injected by JS based on sport -->
-      </div>
-
       <div class='skeleton-grid' id='skeleton-grid'>
-        <div class='skeleton-card'></div>
-        <div class='skeleton-card'></div>
-        <div class='skeleton-card'></div>
-        <div class='skeleton-card'></div>
+        <div class='skeleton-card'></div><div class='skeleton-card'></div>
+        <div class='skeleton-card'></div><div class='skeleton-card'></div>
       </div>
       <div id='matches-root'></div>
     </div>
@@ -311,7 +262,7 @@ body.Night .skeleton-card{background:linear-gradient(90deg,#263545 25%,#1c2733 5
 
 <footer>
   <div class='foot-inner container'>
-    <p class='foot-copy'>© <span id='footYear'></span> Sports Snap. All streams are sourced from third-party platforms.</p>
+    <p class='foot-copy'>© <span id='footYear'></span> Sports Snap. All streams sourced from third-party platforms.</p>
     <div class='foot-soc'>
       <div class='btn-soc tg' onclick="window.open('https://t.me/sportssnapofficial','_blank')"><svg viewBox='0 0 24 24'><path d='m9.417 15.181-.397 5.584c.568 0 .814-.244 1.109-.537l2.663-2.545 5.518 4.041c1.012.564 1.725.267 1.998-.931l3.622-16.972c.321-1.496-.541-2.081-1.527-1.714l-21.29 8.151c-1.453.564-1.431 1.374-.247 1.741l5.443 1.693 12.643-7.911c.595-.394 1.136-.176.691.218z'/></svg></div>
       <div class='btn-soc yt' onclick="window.open('https://www.youtube.com/channel/sportssnap2023','_blank')"><svg viewBox='0 0 24 24'><path d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'/></svg></div>
@@ -327,101 +278,166 @@ body.Night .skeleton-card{background:linear-gradient(90deg,#263545 25%,#1c2733 5
 </div>
 
 <script>
-/* ── Dark mode ── */
+/* Dark mode */
 document.getElementById('nightToggle').addEventListener('click',function(){
-  var n=document.body.classList.toggle('Night');
-  localStorage.setItem('mode',n?'rdmode':'light');
+  document.body.classList.toggle('Night');
+  localStorage.setItem('mode',document.body.classList.contains('Night')?'rdmode':'light');
 });
-
-/* ── Mobile menu ── */
+/* Mobile menu */
 var menuBtn=document.getElementById('menuBtn'),mobNav=document.getElementById('mobNav');
 menuBtn.addEventListener('click',function(){var o=menuBtn.classList.toggle('open');mobNav.classList.toggle('open',o);});
 mobNav.addEventListener('click',function(e){if(e.target===mobNav){menuBtn.classList.remove('open');mobNav.classList.remove('open');}});
 
-/* ── Dates ── */
+/* Dates */
 var ds=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 document.getElementById('streamDate').textContent=ds;
 document.getElementById('matchDate').textContent=ds;
 document.getElementById('footYear').textContent=new Date().getFullYear();
 
-/* ── URL param ── */
+/* URL param */
 var matchId=new URLSearchParams(window.location.search).get('sportssnap')||'';
 
-/* ── Status helpers ── */
+/* Helpers */
+var FIFTEEN=15*60*1000;
+function pad(n){return n<10?'0'+n:''+n;}
+function fmt(ms){
+  var s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),sec=s%60;
+  if(d>0)return d+'d '+pad(h)+'h '+pad(m)+'m '+pad(sec)+'s';
+  if(h>0)return pad(h)+':'+pad(m)+':'+pad(sec);
+  return pad(m)+':'+pad(sec);
+}
 function getStatus(start,end){
   var now=new Date(),s=new Date(start),e=new Date(end);
-  if(now<s)return'upcoming';
-  if(now>=s&&now<=e)return'live';
-  return'ended';
-}
-function formatCountdown(ms){
-  var s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),sec=s%60;
-  if(d>0)return d+'d '+h+'h '+m+'m';
-  if(h>0)return h+'h '+m+'m '+sec+'s';
-  return m+'m '+sec+'s';
+  if(now<s)return'upcoming';if(now>=s&&now<=e)return'live';return'ended';
 }
 
-/* ── LOAD STREAM LINKS from matchlink.json ── */
-(function loadStreamLinks(){
-  var spinner=document.getElementById('stream-spinner');
-  var inner=document.getElementById('stream-links-inner');
-  var titleEl=document.getElementById('stream-title-text');
-  var box=document.getElementById('stream-box');
+/* ══════════════════════════════
+   STREAM BOX STATE MACHINE
+   ── countdown  : > 15min before start
+   ── links      : ≤15min before start, during match, ≤15min after end
+   ── ended      : > 15min after end
+   ── no-match   : no ?sportssnap param
+══════════════════════════════ */
+var matchStart=null, matchEnd=null, matchLinkData=null;
+var lastState='', cdInterval=null;
 
-  if(!matchId){
-    spinner.style.display='none';
-    box.classList.add('no-match');
-    inner.innerHTML='<div class="no-match-msg">👆 Select a match below to watch the live stream.</div>';
-    return;
-  }
+function streamState(){
+  if(!matchId||!matchStart||!matchEnd) return 'no-match';
+  var now=new Date(), toStart=matchStart-now, afterEnd=now-matchEnd;
+  if(toStart>FIFTEEN) return 'countdown';
+  if(toStart>0)       return 'links';          /* ≤15min before start */
+  if(now<=matchEnd)   return 'links';          /* match live */
+  if(afterEnd<=FIFTEEN) return 'links';        /* ≤15min after end */
+  return 'ended';
+}
 
-  fetch('https://sportssnap.github.io/api/matchlink.json')
-    .then(function(r){return r.json();})
-    .then(function(data){
-      spinner.style.display='none';
-      var match=data.matches[matchId];
-      if(!match){
-        box.classList.add('no-match');
-        inner.innerHTML='<div class="no-match-msg">⚠️ Stream links not available yet. Check back 15 minutes before kick-off.</div>';
-        return;
-      }
-      titleEl.textContent=match.title;
-      var html='<div class="stream-links-wrap">';
-      html+='<div class="stream-links-title">'+match.title+'</div>';
-      match.links.forEach(function(link){
-        html+='<a class="stream-link-btn" href="'+link.url+'" target="_blank" rel="noopener">'+link.label+'</a>';
+function renderStream(){
+  var state=streamState();
+  var content=document.getElementById('stream-content');
+  /* Only re-render when state changes to avoid flicker */
+  if(state===lastState) return;
+  lastState=state;
+
+  if(state==='countdown'){
+    var diff=matchStart-new Date();
+    var soon=diff<=3600000;
+    content.innerHTML=
+      '<div class="countdown-box'+(soon?' cd-soon':'')+'" id="cdBox">'
+        +'<div class="cd-label">⏱ Match Starts In</div>'
+        +'<div class="cd-timer" id="cdTimer">'+fmt(diff)+'</div>'
+        +'<div class="cd-sub">Stream links appear 15 minutes before kick-off</div>'
+      +'</div>';
+
+  } else if(state==='links'){
+    if(matchLinkData){
+      var html='<div class="technorati-links"><div class="tl-title">'+matchLinkData.title+'</div>';
+      matchLinkData.links.forEach(function(lk){
+        html+='<a href="'+lk.url+'" target="_blank" rel="noopener">'+lk.label+'</a>';
       });
       html+='</div>';
-      inner.innerHTML=html;
+      content.innerHTML=html;
+    } else {
+      content.innerHTML='<div class="no-match-box"><div class="no-match-msg">⚠️ Stream links not available yet. Check back shortly.</div></div>';
+    }
+
+  } else if(state==='ended'){
+    content.innerHTML=
+      '<div class="ended-box">'
+        +'<div class="ended-icon">🏁</div>'
+        +'<div class="ended-title">Match Has Ended</div>'
+        +'<div class="ended-sub">Click a match below to watch another live stream</div>'
+      +'</div>';
+
+  } else {
+    content.innerHTML='<div class="no-match-box"><div class="no-match-msg">👆 Select a match below to watch the live stream.</div></div>';
+  }
+}
+
+function tickStream(){
+  /* Update countdown digits without full re-render */
+  var state=streamState();
+  if(state!==lastState){ renderStream(); return; }
+  if(state==='countdown'){
+    var el=document.getElementById('cdTimer'); if(!el) return;
+    var diff=matchStart-new Date();
+    el.textContent=fmt(diff);
+    var box=document.getElementById('cdBox'); if(!box) return;
+    box.classList.toggle('cd-soon',diff<=3600000);
+  }
+}
+
+function startStreamTick(){
+  if(cdInterval)clearInterval(cdInterval);
+  cdInterval=setInterval(tickStream,1000);
+}
+
+/* Fetch matchlink.json then render */
+function initStream(){
+  var spinner=document.getElementById('stream-spinner');
+  if(!matchId){
+    spinner.style.display='none';
+    renderStream(); startStreamTick(); return;
+  }
+  fetch('https://sportssnap.github.io/api/matchlink.json')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var m=d.matches[matchId];
+      if(m){ matchLinkData=m; document.getElementById('stream-title-text').textContent=m.title; }
+      spinner.style.display='none';
+      renderStream(); startStreamTick();
     })
     .catch(function(){
       spinner.style.display='none';
-      box.classList.add('no-match');
-      inner.innerHTML='<div class="no-match-msg">⚠️ Could not load stream links. Please refresh.</div>';
+      renderStream(); startStreamTick();
     });
-})();
+}
 
-/* ── BUILD MATCH CARD ── */
+/* ══════════════════════════════
+   MORE MATCHES — same sport only
+══════════════════════════════ */
+var allMatches=[], currentSport='football';
+var cardInterval=null;
+
 function logoHtml(logo,flag,name){
   if(logo)return '<div class="mc-logo"><img src="'+logo+'" alt="'+name+'" onerror="this.parentNode.innerHTML=\'<span class=mc-flag>'+flag+'</span>\'"/></div>';
   return '<div class="mc-logo"><span class="mc-flag">'+flag+'</span></div>';
 }
 function buildCard(m){
   var status=getStatus(m.start,m.end),now=new Date(),start=new Date(m.start);
-  var label='',cls='';
-  if(status==='live'){label='● LIVE NOW';cls='status-live';}
-  else if(status==='ended'){label='Ended';cls='status-ended';}
-  else{var diff=start-now;label='⏱ '+formatCountdown(diff);cls=diff<3600000?'status-soon':'status-upcoming';}
-  var badgeCls='badge-'+(m.badge||'default');
-  var isCurrent=(m.id===matchId)?'style="outline:2px solid #3749b4;"':'';
-  return '<div class="match-card" '+isCurrent+' data-start="'+m.start+'" data-end="'+m.end+'" onclick="location.href=\''+m.stream_url+'\'">'
+  var lbl='',cls='';
+  if(status==='live'){lbl='● LIVE NOW';cls='status-live';}
+  else if(status==='ended'){lbl='Ended';cls='status-ended';}
+  else{var diff=start-now;lbl='⏱ '+fmt(diff);cls=diff<3600000?'status-soon':'status-upcoming';}
+  var bc='badge-'+(m.badge||'default');
+  var hl=m.id===matchId?' style="outline:2px solid #3749b4;outline-offset:-2px;"':'';
+  return '<div class="match-card"'+hl+' data-start="'+m.start+'" data-end="'+m.end+'" onclick="location.href=\''+m.stream_url+'\'">'
     +'<div class="match-card-inner">'
       +'<div class="mc-team">'+logoHtml(m.home_logo,m.home_flag,m.home_team)+'<div class="mc-name">'+m.home_team+'</div></div>'
-      +'<div class="mc-center"><div class="mc-vs">VS</div><div class="mc-time-box '+cls+'">'+label+'</div></div>'
+      +'<div class="mc-center"><div class="mc-vs">VS</div><div class="mc-time-box '+cls+'">'+lbl+'</div></div>'
       +'<div class="mc-team">'+logoHtml(m.away_logo,m.away_flag,m.away_team)+'<div class="mc-name">'+m.away_team+'</div></div>'
     +'</div>'
     +'<div class="match-info-bar">'
-      +'<div class="mib-item"><span class="mib-badge '+badgeCls+'">'+m.competition_short+'</span></div>'
+      +'<div class="mib-item"><span class="mib-badge '+bc+'">'+m.competition_short+'</span></div>'
       +'<div class="mib-item" style="font-size:11px">📍 '+(m.venue||'TBC')+'</div>'
       +(m.format?'<div class="mib-item">'+m.format+'</div>':'')
     +'</div>'
@@ -430,93 +446,65 @@ function buildCard(m){
 }
 function sortMatches(arr){
   return arr.slice().sort(function(a,b){
-    var ord={live:0,upcoming:1,ended:2};
-    var sa=getStatus(a.start,a.end),sb=getStatus(b.start,b.end);
+    var ord={live:0,upcoming:1,ended:2},sa=getStatus(a.start,a.end),sb=getStatus(b.start,b.end);
     if(ord[sa]!==ord[sb])return ord[sa]-ord[sb];
     return new Date(a.start)-new Date(b.start);
   });
 }
-
-/* ── RENDER MORE MATCHES (filtered by sport of current match) ── */
-var allMatches=[];
-var currentSport='all'; // determined after JSON load
-var activeFilter=''; // will be set to sport
-
-function renderMoreMatches(filter){
+function renderMoreMatches(){
   var root=document.getElementById('matches-root');
-  var list=allMatches.filter(function(m){return filter==='all'||m.sport===filter;});
-  // Exclude current match from the list so it's shown highlighted but listed too
-  if(!list.length){root.innerHTML='<div class="matches-empty">No more matches found.</div>';return;}
-  root.innerHTML='<div class="matches-grid">'+sortMatches(list).map(buildCard).join('')+'</div>';
-  startTimers();
+  /* Show only same sport, excluding current match */
+  var list=allMatches.filter(function(m){return m.sport===currentSport&&m.id!==matchId;});
+  if(!list.length){
+    root.innerHTML='<div class="matches-empty">No other '+(currentSport==='football'?'football':'cricket')+' matches at the moment.</div>';
+    return;
+  }
+  var emoji=currentSport==='football'?'⚽':'🏏';
+  var label='More '+(currentSport==='football'?'Football':'Cricket')+' Matches';
+  root.innerHTML='<div class="sport-sep">'+emoji+' '+label+'</div>'
+    +'<div class="matches-grid">'+sortMatches(list).map(buildCard).join('')+'</div>';
+  startCardTimers();
 }
-
-function setupFilterTabs(sport){
-  // Only show relevant filter tabs; if sport known show that sport selected + All
-  var wrap=document.getElementById('filter-tabs-wrap');
-  var liveAll=allMatches.filter(function(m){return getStatus(m.start,m.end)==='live';}).length;
-  var liveFoot=allMatches.filter(function(m){return m.sport==='football'&&getStatus(m.start,m.end)==='live';}).length;
-  var liveCric=allMatches.filter(function(m){return m.sport==='cricket'&&getStatus(m.start,m.end)==='live';}).length;
-
-  function lc(n){return n>0?'<span class="live-count" style="display:inline-block">'+n+'</span>':'';}
-
-  // Set default filter = current match sport
-  activeFilter=sport||'all';
-
-  wrap.innerHTML=
-    '<button class="filter-tab'+(activeFilter==='all'?' active-all':'')+'" onclick="setFilter(this,\'all\')">All'+lc(liveAll)+'</button>'
-    +'<button class="filter-tab'+(activeFilter==='football'?' active-foot':'')+'" onclick="setFilter(this,\'football\')">⚽ Football'+lc(liveFoot)+'</button>'
-    +'<button class="filter-tab'+(activeFilter==='cricket'?' active-cric':'')+'" onclick="setFilter(this,\'cricket\')">🏏 Cricket'+lc(liveCric)+'</button>';
-
-  renderMoreMatches(activeFilter);
-}
-
-function setFilter(btn,filter){
-  activeFilter=filter;
-  document.querySelectorAll('.filter-tab').forEach(function(b){b.className='filter-tab';});
-  btn.classList.add('active-'+filter);
-  renderMoreMatches(filter);
-}
-
-/* ── Timers ── */
-var timerInterval=null;
-function startTimers(){
-  if(timerInterval)clearInterval(timerInterval);
-  timerInterval=setInterval(function(){
+function startCardTimers(){
+  if(cardInterval)clearInterval(cardInterval);
+  cardInterval=setInterval(function(){
     var now=new Date();
     document.querySelectorAll('.match-card[data-start]').forEach(function(card){
       var box=card.querySelector('.mc-time-box');if(!box)return;
-      var start=new Date(card.getAttribute('data-start')),end=new Date(card.getAttribute('data-end'));
-      var status=now<start?'upcoming':(now<=end?'live':'ended');
+      var s=new Date(card.getAttribute('data-start')),e=new Date(card.getAttribute('data-end'));
+      var status=now<s?'upcoming':(now<=e?'live':'ended');
       box.className='mc-time-box ';
       if(status==='live'){box.className+='status-live';box.textContent='● LIVE NOW';}
       else if(status==='ended'){box.className+='status-ended';box.textContent='Ended';}
-      else{var diff=start-now;box.textContent='⏱ '+formatCountdown(diff);box.className+=diff<3600000?'status-soon':'status-upcoming';}
+      else{var diff=s-now;box.textContent='⏱ '+fmt(diff);box.className+=diff<3600000?'status-soon':'status-upcoming';}
     });
   },1000);
 }
 
-/* ── FETCH matches.json ── */
+/* ── Fetch matches.json → get sport + timing → init everything ── */
 fetch('https://sportssnap.github.io/fmatch/matches.json')
   .then(function(r){return r.json();})
   .then(function(data){
     allMatches=data.matches;
     document.getElementById('skeleton-grid').style.display='none';
 
-    // Find current match's sport to default the filter
     var current=allMatches.find(function(m){return m.id===matchId;});
-    var sport=current?current.sport:'all';
-    currentSport=sport;
+    if(current){
+      currentSport=current.sport;
+      matchStart=new Date(current.start);
+      matchEnd=new Date(current.end);
+      document.getElementById('stream-title-text').textContent=current.home_team+' vs '+current.away_team;
+      document.getElementById('more-matches-title').textContent=
+        currentSport==='football'?'More Football Matches':'More Cricket Matches';
+    }
 
-    // Update more matches title
-    if(sport==='football')document.getElementById('more-matches-title').textContent='More Football Matches';
-    else if(sport==='cricket')document.getElementById('more-matches-title').textContent='More Cricket Matches';
-
-    setupFilterTabs(sport);
+    renderMoreMatches();
+    initStream();
   })
   .catch(function(){
     document.getElementById('skeleton-grid').style.display='none';
-    document.getElementById('matches-root').innerHTML='<div class="matches-empty">⚠️ Could not load matches. Please refresh.</div>';
+    document.getElementById('matches-root').innerHTML='<div class="matches-empty">Could not load matches. Please refresh.</div>';
+    initStream();
   });
 </script>
 </body>
