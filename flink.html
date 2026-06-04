@@ -502,20 +502,20 @@ body.Night .skeleton-card{background:linear-gradient(90deg,#263545 25%,#1c2733 5
       <div class='box-title'>
         <h2>
           <span class='dot dot-live'></span>
-          <span id='matches-panel-title'>All Upcoming &amp; Live Matches</span>
+          All Upcoming & Live Matches
         </h2>
         <span class='tab-date' id='matchDate'></span>
       </div>
 
       <!-- Filter tabs -->
       <div class='filter-tabs'>
-        <button class='filter-tab active-all' id='tab-all' data-filter='all' onclick='filterMatches(this,"all")'>
-          All <span class='live-count' id='live-total' style='display:none'>0</span>
+        <button class='filter-tab active-all' data-filter='all' onclick='filterMatches(this,"all")'>
+          All <span class='live-count' id='live-total'>0</span>
         </button>
-        <button class='filter-tab' id='tab-football' data-filter='football' onclick='filterMatches(this,"football")'>
+        <button class='filter-tab' data-filter='football' onclick='filterMatches(this,"football")'>
           ⚽ Football <span class='live-count' id='live-foot' style='display:none'>0</span>
         </button>
-        <button class='filter-tab' id='tab-cricket' data-filter='cricket' onclick='filterMatches(this,"cricket")'>
+        <button class='filter-tab' data-filter='cricket' onclick='filterMatches(this,"cricket")'>
           🏏 Cricket <span class='live-count' id='live-cric' style='display:none'>0</span>
         </button>
       </div>
@@ -566,47 +566,6 @@ body.Night .skeleton-card{background:linear-gradient(90deg,#263545 25%,#1c2733 5
 
 <script>
 /* ═══════════════════════════════════════════════════
-   URL PARAMS — read once at top
-   ?sport=football  → show only football matches below
-   ?sport=cricket   → show only cricket matches below
-   ?sportssnap=xxx  → load that stream
-═══════════════════════════════════════════════════ */
-var urlParams   = new URLSearchParams(window.location.search);
-var sportParam  = (urlParams.get('sport') || '').toLowerCase(); // 'football' | 'cricket' | ''
-var streamParam = urlParams.get('sportssnap');
-
-/* ═══════════════════════════════════════════════════
-   SET PANEL TITLE based on sport param
-═══════════════════════════════════════════════════ */
-(function setPanelTitle(){
-  var panelTitle = document.getElementById('matches-panel-title');
-  if(!panelTitle) return;
-  if(sportParam === 'football') panelTitle.textContent = '⚽ More Football Matches';
-  else if(sportParam === 'cricket') panelTitle.textContent = '🏏 More Cricket Matches';
-  else panelTitle.textContent = 'All Upcoming & Live Matches';
-})();
-
-/* ═══════════════════════════════════════════════════
-   HIDE FILTER TABS that don't apply when sport is locked
-═══════════════════════════════════════════════════ */
-(function lockFilterTabs(){
-  if(!sportParam) return;
-  // Hide the All / opposite-sport tab since we are locked to one sport
-  var tabFoot = document.getElementById('tab-football');
-  var tabCric = document.getElementById('tab-cricket');
-  var tabAll  = document.getElementById('tab-all');
-  if(sportParam === 'football'){
-    if(tabCric) tabCric.style.display = 'none';
-    if(tabAll)  tabAll.style.display  = 'none';
-    if(tabFoot){ tabFoot.className = 'filter-tab active-football'; }
-  } else if(sportParam === 'cricket'){
-    if(tabFoot) tabFoot.style.display = 'none';
-    if(tabAll)  tabAll.style.display  = 'none';
-    if(tabCric){ tabCric.className = 'filter-tab active-cricket'; }
-  }
-})();
-
-/* ═══════════════════════════════════════════════════
    DARK MODE
 ═══════════════════════════════════════════════════ */
 document.getElementById('nightToggle').addEventListener('click', function(){
@@ -639,11 +598,12 @@ document.getElementById('footYear').textContent   = new Date().getFullYear();
    STREAM CONTENT (from URL ?sportssnap=)
 ═══════════════════════════════════════════════════ */
 (function loadStream(){
-  var titleEl   = document.getElementById('stream-title-text');
-  var spinner   = document.getElementById('stream-spinner');
+  var param = new URLSearchParams(window.location.search).get('sportssnap');
+  var titleEl  = document.getElementById('stream-title-text');
+  var spinner  = document.getElementById('stream-spinner');
   var container = document.getElementById('stream-inner');
 
-  if(!streamParam){
+  if(!param){
     spinner.style.display = 'none';
     container.innerHTML = "<div class='notice-message'>Select a match below to watch the live stream.</div>";
     titleEl.textContent = 'Live Stream';
@@ -651,7 +611,7 @@ document.getElementById('footYear').textContent   = new Date().getFullYear();
   }
 
   titleEl.textContent = 'Loading Stream…';
-  fetch('https://sportssnaplive.neocities.org/' + streamParam)
+  fetch('https://sportssnaplive.neocities.org/' + param)
     .then(function(r){ return r.text(); })
     .then(function(html){
       spinner.style.display = 'none';
@@ -666,14 +626,17 @@ document.getElementById('footYear').textContent   = new Date().getFullYear();
 })();
 
 /* ═══════════════════════════════════════════════════
-   HELPERS
+   MATCH STATUS HELPER
 ═══════════════════════════════════════════════════ */
 function getStatus(start, end){
-  var now = new Date(), s = new Date(start), e = new Date(end);
+  var now = new Date();
+  var s   = new Date(start);
+  var e   = new Date(end);
   if(now < s) return 'upcoming';
   if(now >= s && now <= e) return 'live';
   return 'ended';
 }
+
 
 function formatCountdown(ms){
   var s   = Math.floor(ms / 1000);
@@ -686,11 +649,16 @@ function formatCountdown(ms){
   return m + 'm ' + sec + 's';
 }
 
-function sortMatches(arr){
-  return arr.slice().sort(function(a, b){
+/* ═══════════════════════════════════════════════════
+   SORT MATCHES: live → upcoming (soonest first) → ended
+═══════════════════════════════════════════════════ */
+function sortMatches(matches){
+  return matches.slice().sort(function(a, b){
+    var sa = getStatus(a.start, a.end);
+    var sb = getStatus(b.start, b.end);
     var order = { live:0, upcoming:1, ended:2 };
-    var sa = getStatus(a.start, a.end), sb = getStatus(b.start, b.end);
     if(order[sa] !== order[sb]) return order[sa] - order[sb];
+    // Within same status, sort by start time ascending (soonest upcoming first)
     return new Date(a.start) - new Date(b.start);
   });
 }
@@ -698,42 +666,40 @@ function sortMatches(arr){
 /* ═══════════════════════════════════════════════════
    BUILD ONE MATCH CARD
 ═══════════════════════════════════════════════════ */
-function buildCard(match){
+function buildCard(match, sport){
   var status = getStatus(match.start, match.end);
   var now    = new Date();
   var start  = new Date(match.start);
-  var diff   = start - now;
 
-  var timeLabel, timeClass;
+  // Time box label — countdown for ALL upcoming, not just sub-1h
+  var timeLabel = '';
+  var timeClass = '';
   if(status === 'live'){
-    timeLabel = '● LIVE NOW'; timeClass = 'status-live';
+    timeLabel = '● LIVE NOW';
+    timeClass = 'status-live';
   } else if(status === 'ended'){
-    timeLabel = 'Ended'; timeClass = 'status-ended';
+    timeLabel = 'Ended';
+    timeClass = 'status-ended';
   } else {
+    var diff  = start - now;
     timeLabel = '⏱ ' + formatCountdown(diff);
     timeClass = diff < 3600000 ? 'status-soon' : 'status-upcoming';
   }
 
+  // Logo or flag
   function logoHtml(logo, flag, name){
     if(logo){
-      var safeFlag = flag.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-      return '<div class="mc-logo"><img src="'+logo+'" alt="'+name
-        +'" onerror="this.parentNode.innerHTML=\'<span class=mc-flag>'+safeFlag+'</span>\'"/></div>';
+      return '<div class="mc-logo"><img src="'+logo+'" alt="'+name+'" onerror="this.parentNode.innerHTML=\'<span class=mc-flag>'+flag+'</span>\'"/></div>';
     }
     return '<div class="mc-logo"><span class="mc-flag">'+flag+'</span></div>';
   }
 
-  var badgeCls = 'badge-' + (match.badge || 'default');
-  var url      = match.stream_url || '#';
-  var sport    = match.sport || 'football';
+  // Badge class
+  var badgeCls = 'badge-' + (match.badge||'default');
 
-  // Sport icon in info bar
-  var sportIcon = sport === 'cricket' ? '🏏' : '⚽';
+  var url = match.stream_url || '#';
 
-  return '<div class="match-card" data-sport="'+sport
-    +'" data-status="'+status+'" data-id="'+match.id
-    +'" data-start="'+match.start+'" data-end="'+match.end
-    +'" onclick="goMatch(\''+url+'\')">'
+  return '<div class="match-card" data-sport="'+sport+'" data-status="'+status+'" data-id="'+match.id+'" data-start="'+match.start+'" data-end="'+match.end+'" onclick="goMatch(\''+url+'\')">'
     + '<div class="match-card-inner">'
       + '<div class="mc-team">'
         + logoHtml(match.home_logo, match.home_flag, match.home_team)
@@ -751,40 +717,30 @@ function buildCard(match){
     + '<div class="match-info-bar">'
       + '<div class="mib-item"><span class="mib-badge '+badgeCls+'">'+match.competition_short+'</span></div>'
       + '<div class="mib-item" style="font-size:11px">📍 '+(match.venue||'TBC')+'</div>'
-      + '<div class="mib-item">' + sportIcon + (match.format ? ' '+match.format : '') + '</div>'
+      + (match.format ? '<div class="mib-item">'+match.format+'</div>' : '')
     + '</div>'
     + '<div class="watch-overlay"><div class="watch-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>'
   + '</div>';
 }
 
 /* ═══════════════════════════════════════════════════
-   RENDER MATCHES
+   RENDER ALL MATCHES FROM JSON
 ═══════════════════════════════════════════════════ */
-var allMatches   = [];   // flat array from JSON
-var currentFilter = sportParam || 'all';  // locked to sport if came from sport link
+var allMatchData = { football:[], cricket:[] };
+var currentFilter = 'all';
 
 function renderMatches(data){
-  // Support both new flat format (data.matches) and old split format (data.football / data.cricket)
-  if(data.matches){
-    allMatches = data.matches;
-  } else {
-    allMatches = [];
-    (data.football||[]).forEach(function(m){ allMatches.push(Object.assign({sport:'football'},m)); });
-    (data.cricket||[]).forEach(function(m){  allMatches.push(Object.assign({sport:'cricket'},m)); });
-  }
-
+  allMatchData = data;
+  var root = document.getElementById('matches-root');
   document.getElementById('skeleton-grid').style.display = 'none';
 
-  // Count live per sport
-  var liveTotal=0, liveFoot=0, liveCric=0;
-  allMatches.forEach(function(m){
-    if(getStatus(m.start,m.end)==='live'){
-      liveTotal++;
-      if(m.sport==='football') liveFoot++;
-      else liveCric++;
-    }
-  });
+  var liveTotal = 0, liveFoot = 0, liveCric = 0;
 
+  // Count live
+  data.football.forEach(function(m){ if(getStatus(m.start,m.end)==='live'){ liveTotal++; liveFoot++; }});
+  data.cricket.forEach(function(m){ if(getStatus(m.start,m.end)==='live'){ liveTotal++; liveCric++; }});
+
+  // Update counters
   var lt = document.getElementById('live-total');
   var lf = document.getElementById('live-foot');
   var lc = document.getElementById('live-cric');
@@ -796,52 +752,48 @@ function renderMatches(data){
 }
 
 function showFilter(filter){
-  currentFilter = filter;
   var root = document.getElementById('matches-root');
   root.innerHTML = '';
 
-  // Determine which sports to show
   var showFoot = (filter === 'all' || filter === 'football');
   var showCric = (filter === 'all' || filter === 'cricket');
-
-  var footMatches = allMatches.filter(function(m){ return m.sport === 'football'; });
-  var cricMatches = allMatches.filter(function(m){ return m.sport === 'cricket'; });
-
   var hasContent = false;
 
-  if(showFoot && footMatches.length){
-    var sepF = '<div class="sport-sep">⚽ Football Matches</div>';
-    var gridF = '<div class="matches-grid">';
-    sortMatches(footMatches).forEach(function(m){ gridF += buildCard(m); });
-    gridF += '</div>';
-    root.innerHTML += sepF + gridF;
+  if(showFoot && allMatchData.football.length){
+    var sep = '<div class="sport-sep">⚽ Football Matches</div>';
+    var grid = '<div class="matches-grid">';
+    sortMatches(allMatchData.football).forEach(function(m){ grid += buildCard(m,'football'); });
+    grid += '</div>';
+    root.innerHTML += sep + grid;
     hasContent = true;
   }
-  if(showCric && cricMatches.length){
-    var sepC = '<div class="sport-sep" style="margin-top:4px">🏏 Cricket Matches</div>';
-    var gridC = '<div class="matches-grid">';
-    sortMatches(cricMatches).forEach(function(m){ gridC += buildCard(m); });
-    gridC += '</div>';
-    root.innerHTML += sepC + gridC;
+  if(showCric && allMatchData.cricket.length){
+    var sep2 = '<div class="sport-sep" style="margin-top:4px">🏏 Cricket Matches</div>';
+    var grid2 = '<div class="matches-grid">';
+    sortMatches(allMatchData.cricket).forEach(function(m){ grid2 += buildCard(m,'cricket'); });
+    grid2 += '</div>';
+    root.innerHTML += sep2 + grid2;
     hasContent = true;
   }
   if(!hasContent){
     root.innerHTML = '<div class="matches-empty">No matches available.</div>';
   }
 
+  // Start live timers after render
   startTimers();
 }
 
 function filterMatches(btn, filter){
-  // Don't allow switching away from locked sport
-  if(sportParam && filter !== sportParam && filter !== 'all') return;
-  document.querySelectorAll('.filter-tab').forEach(function(b){ b.className = 'filter-tab'; });
-  btn.classList.add('active-' + filter);
+  currentFilter = filter;
+  document.querySelectorAll('.filter-tab').forEach(function(b){
+    b.className = 'filter-tab';
+  });
+  btn.classList.add('active-'+filter);
   showFilter(filter);
 }
 
 function goMatch(url){
-  if(!url || url === '#') return;
+  if(!url||url==='#') return;
   window.location.href = url;
 }
 
@@ -857,21 +809,21 @@ function startTimers(){
 function updateTimerLabels(){
   var now = new Date();
   document.querySelectorAll('.match-card[data-start]').forEach(function(card){
-    var box   = card.querySelector('.mc-time-box');
+    var box    = card.querySelector('.mc-time-box');
     if(!box) return;
-    var start = new Date(card.getAttribute('data-start'));
-    var end   = new Date(card.getAttribute('data-end'));
-    var st    = now < start ? 'upcoming' : (now <= end ? 'live' : 'ended');
-    var diff  = start - now;
+    var start  = new Date(card.getAttribute('data-start'));
+    var end    = new Date(card.getAttribute('data-end'));
+    var status = now < start ? 'upcoming' : (now <= end ? 'live' : 'ended');
 
     box.className = 'mc-time-box ';
-    if(st === 'live'){
+    if(status === 'live'){
       box.className += 'status-live';
       box.textContent = '● LIVE NOW';
-    } else if(st === 'ended'){
+    } else if(status === 'ended'){
       box.className += 'status-ended';
       box.textContent = 'Ended';
     } else {
+      var diff = start - now;
       box.textContent = '⏱ ' + formatCountdown(diff);
       box.className  += diff < 3600000 ? 'status-soon' : 'status-upcoming';
     }
@@ -881,7 +833,7 @@ function updateTimerLabels(){
 /* ═══════════════════════════════════════════════════
    FETCH JSON
 ═══════════════════════════════════════════════════ */
-fetch('https://sportssnap.github.io/flive/matches.json')
+fetch('https://sportssnap.github.io/fmatch/matches.json')
   .then(function(r){ return r.json(); })
   .then(function(data){ renderMatches(data); })
   .catch(function(){
